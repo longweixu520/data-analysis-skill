@@ -70,28 +70,12 @@ DATA_CONTRACT = """\
 - [ ] 数据分析报告.md
 """
 
-RUN_PIPELINE = '''\
-"""一键运行：解析 → 清洗 → 输出标准长表。"""
-from pathlib import Path
-import pandas as pd
-
-OUTPUT = Path(__file__).resolve().parent.parent / "output"
-OUTPUT.mkdir(parents=True, exist_ok=True)
-
-def main():
-    # TODO: 替换为实际解析逻辑
-    sample = OUTPUT.parent / "output" / "02_清洗后长表.csv"
-    if sample.exists():
-        print(f"已存在 {sample}，跳过")
-        return
-    print("请实现 src/run_pipeline.py 中的解析逻辑")
-
-if __name__ == "__main__":
-    main()
-'''
+RUN_PIPELINE = None  # 使用 templates/src/run_pipeline.py
 
 
 def create_project(root: Path, with_sample: bool) -> None:
+    skill_root = Path(__file__).resolve().parent.parent
+    template_pipeline = skill_root / "templates" / "src" / "run_pipeline.py"
     dirs = [
         root / "原始数据",
         root / "output" / "图表",
@@ -107,7 +91,8 @@ def create_project(root: Path, with_sample: bool) -> None:
         encoding="utf-8",
     )
     (root / "交付清单.md").write_text("# 交付清单\n\n- [ ] output/\n", encoding="utf-8")
-    (root / "src" / "run_pipeline.py").write_text(RUN_PIPELINE, encoding="utf-8")
+    pipeline_src = template_pipeline.read_text(encoding="utf-8") if template_pipeline.exists() else "# TODO: run_pipeline\n"
+    (root / "src" / "run_pipeline.py").write_text(pipeline_src, encoding="utf-8")
     (root / "src" / "parse" / "__init__.py").write_text("", encoding="utf-8")
     (root / "requirements.txt").write_text("pandas>=2.0\nopenpyxl>=3.1\nmatplotlib>=3.8\n", encoding="utf-8")
 

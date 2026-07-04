@@ -24,6 +24,9 @@ $PYTHON "$ROOT/scripts/plot_delivery.py" "$DEMO/output/"
 echo "==> 报告骨架"
 $PYTHON "$ROOT/scripts/generate_report.py" "$DEMO" -n "演示项目"
 
+echo "==> 导出 Excel"
+$PYTHON "$ROOT/scripts/export_workbook.py" "$DEMO/output/"
+
 echo "==> 交付质检"
 $PYTHON "$ROOT/scripts/validate_delivery.py" "$DEMO/output/" --strict --project "$DEMO"
 

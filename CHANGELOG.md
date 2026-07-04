@@ -1,5 +1,14 @@
 # 更新日志
 
+## v1.3.0 (2026-07)
+
+- `parse_matrix.py`：模式 A 矩阵一键转长表
+- `export_workbook.py`：多 sheet Excel 汇总交付
+- `plot_delivery` 增加热力图（fig04）
+- `Makefile`、`AGENTS.md`、`templates/src/run_pipeline.py`
+- `assets/09-解析代码模板.md`
+- SKILL.md 增加 `paths` 自动触发
+
 ## v1.2.0 (2026-07)
 
 ### 可运行工具链

@@ -76,6 +76,35 @@ def plot_weights_bar(csv_path: Path, out_dir: Path):
     plt.close(fig)
 
 
+def plot_heatmap(long_csv: Path, out_dir: Path, year: int | None = None, top_subjects: int = 12):
+    import pandas as pd
+    import seaborn as sns
+
+    df = pd.read_csv(long_csv, encoding="utf-8-sig")
+    val_col = "清洗值" if "清洗值" in df.columns else "原始值"
+    if year is None:
+        year = int(df["年份"].max())
+    sub = df[df["年份"] == year].copy()
+    comp = sub[sub["是否纳入综合指数"].astype(str).str.strip().isin({"是", "1", "true"})] if "是否纳入综合指数" in sub.columns else sub
+    if comp.empty:
+        comp = sub
+    pivot = comp.pivot_table(index="主体", columns="指标名称", values=val_col, aggfunc="first")
+    if pivot.empty:
+        return
+    # 截面标准化便于对比
+    norm = (pivot - pivot.min()) / (pivot.max() - pivot.min()).replace(0, 1)
+    if len(norm) > top_subjects:
+        totals = norm.mean(axis=1).nlargest(top_subjects)
+        norm = norm.loc[totals.index]
+    fig, ax = plt.subplots(figsize=(max(8, len(norm.columns) * 0.8), max(5, len(norm) * 0.35)))
+    sns.heatmap(norm, annot=True, fmt=".2f", cmap="Blues", ax=ax, cbar_kws={"label": "标准化值"})
+    ax.set_title(f"{year} 年重点指标热力图")
+    fig.tight_layout()
+    for ext in ("png", "svg"):
+        fig.savefig(out_dir / f"fig04_热力图.{ext}", bbox_inches="tight")
+    plt.close(fig)
+
+
 def main():
     parser = argparse.ArgumentParser(description="从分析结果 CSV 生成标准图表")
     parser.add_argument("output_dir", type=Path, help="output/ 目录")
@@ -90,6 +119,7 @@ def main():
     rank_csv = out / "最新年份综合排名.csv"
     comp_csv = out / "综合指数.csv"
     weight_csv = out / "04_指标权重表.csv"
+    long_csv = out / "02_清洗后长表.csv"
 
     if rank_csv.exists():
         plot_ranking_bar(rank_csv, charts, args.top_n)
@@ -100,6 +130,12 @@ def main():
     if weight_csv.exists():
         plot_weights_bar(weight_csv, charts)
         print(f"已生成 {charts}/fig03_权重.*")
+    if long_csv.exists():
+        try:
+            plot_heatmap(long_csv, charts)
+            print(f"已生成 {charts}/fig04_热力图.*")
+        except ImportError:
+            print("跳过热力图：需要 seaborn", file=sys.stderr)
 
     if not any(charts.glob("fig*")):
         print("未找到可绘图的结果文件", file=sys.stderr)
