@@ -1,5 +1,19 @@
 # 更新日志
 
+## v1.2.0 (2026-07)
+
+### 可运行工具链
+- `scripts/lib/da_core.py`：熵权、综合指数、同比、中文 matplotlib
+- `analyze_long_table.py`：长表 → 排名/同比/综合指数
+- `plot_delivery.py`：标准排名/趋势/权重图（PNG+SVG）
+- `generate_report.py`：自动报告骨架
+- `check_long_table.py` / `doctor.py`：校验与环境检查
+- `run_demo.sh`：一键演示全流程
+
+### 文档
+- `references/速查手册.md`、`references/常见问题.md`
+- 样本数据扩展为 4 城 × 3 年 × 3 指标
+
 ## v1.1.0 (2026-07)
 
 - 新增 `references/场景路由表.md`：按任务裁剪四阶段

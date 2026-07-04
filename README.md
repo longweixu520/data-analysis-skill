@@ -89,10 +89,11 @@ cd my_analysis
 /data-analysis 进行交付汇报
 ```
 
-### 依赖
+### 演示
 
 ```bash
-pip install -r requirements.txt
+bash scripts/run_demo.sh          # 一键跑通样本流水线
+python scripts/doctor.py          # 检查依赖
 ```
 
 ---
@@ -110,10 +111,12 @@ data-analysis-skill/
 │   └── roles/               # 四角色子 Skill
 ├── tools/                   # xlsx / csv / docx
 ├── scripts/
-│   ├── init_project.py
-│   ├── profile_data.py
-│   ├── entropy_weights.py
-│   └── validate_delivery.py
+│   ├── lib/da_core.py       # 共享分析库
+│   ├── analyze_long_table.py
+│   ├── plot_delivery.py
+│   ├── generate_report.py
+│   ├── run_demo.sh
+│   └── ...
 └── examples/
 ```
 
