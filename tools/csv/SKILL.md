@@ -55,8 +55,8 @@ duckdb.sql("COPY (SELECT ...) TO 'output/result.parquet' (FORMAT PARQUET)")
 ## 脚本
 
 ```bash
-python tools/csv/scripts/detect_csv.py data.csv
 python tools/csv/scripts/detect_csv.py data.csv --recommend
+python tools/csv/scripts/detect_encoding.py data.csv   # 轻量编码检测
 ```
 
 ## 依赖
