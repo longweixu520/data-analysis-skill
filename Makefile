@@ -25,7 +25,13 @@ report:
 export:
 	$(PYTHON) scripts/export_workbook.py $(PROJECT)/output/
 
+pipeline:
+	$(PYTHON) scripts/run_pipeline.py $(PROJECT)
+
+install:
+	bash scripts/install_skill.sh
+
 validate:
 	$(PYTHON) scripts/validate_delivery.py $(PROJECT)/output/ --strict --project $(PROJECT)
 
-all: analyze plot report export validate
+all: pipeline

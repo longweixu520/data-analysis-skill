@@ -1,0 +1,44 @@
+# 项目分析配置 — 复制到项目根目录为 analysis.config.yaml
+
+project:
+  name: "城市数字经济发展分析"
+  language: zh  # zh | en
+
+data:
+  raw_dir: 原始数据
+  trusted_files:
+    - stats.xlsx
+
+# 模式 A 批量解析：每个 sheet 一张主体×年份表
+parse:
+  - file: stats.xlsx
+    sheet: GDP
+    pattern: matrix_a
+    subject_col: 城市
+    indicator: GDP
+    category: 经济
+    unit: 亿元
+    direction: 正向
+    in_composite: true
+  - file: stats.xlsx
+    sheet: 研发投入
+    pattern: matrix_a
+    subject_col: 城市
+    indicator: 研发投入强度
+    category: 创新
+    unit: "%"
+    direction: 正向
+    in_composite: true
+
+analysis:
+  weight_method: entropy  # entropy | critic | equal
+  composite: true
+  yoy: true
+
+delivery:
+  charts: true
+  markdown_report: true
+  html_report: true
+  excel_workbook: true
+  top_n_rank: 15
+  top_n_trend: 5

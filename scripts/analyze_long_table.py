@@ -24,6 +24,7 @@ def main():
     parser.add_argument("-o", "--output", type=Path, default=Path("output"))
     parser.add_argument("--indicator", type=str, default=None, help="单指标排名时指定指标名")
     parser.add_argument("--no-composite", action="store_true", help="不算综合指数")
+    parser.add_argument("--weight-method", choices=["entropy", "critic", "equal"], default="entropy")
     args = parser.parse_args()
 
     args.output.mkdir(parents=True, exist_ok=True)
@@ -35,7 +36,7 @@ def main():
         sys.exit(1)
 
     val_col = value_column(df)
-    print(f"使用数值列: {val_col}")
+    print(f"使用数值列: {val_col} | 权重方法: {args.weight_method}")
 
     yoy = yoy_analysis(df, val_col)
     yoy_path = args.output / "同比分析.csv"
@@ -48,7 +49,7 @@ def main():
     print(f"已写入 {rank_path} ({len(rank)} 行)")
 
     if not args.no_composite:
-        comp, weights = composite_index_by_year(df, val_col)
+        comp, weights = composite_index_by_year(df, val_col, args.weight_method)
         if not comp.empty:
             comp_path = args.output / "综合指数.csv"
             w_path = args.output / "04_指标权重表.csv"

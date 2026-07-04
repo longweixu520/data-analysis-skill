@@ -84,8 +84,11 @@ def normalize_year_panel(
     df: pd.DataFrame,
     year: int,
     val_col: str,
+    weight_method: str = "entropy",
 ) -> tuple[pd.DataFrame, pd.Series]:
     """返回 (标准化矩阵, 权重)。"""
+    from .eval_methods import get_weights
+
     sub = df[df["年份"] == year].copy()
     indicators = sub["指标名称"].unique()
     directions = {
@@ -96,11 +99,15 @@ def normalize_year_panel(
     norm = pd.DataFrame(index=pivot.index)
     for ind in pivot.columns:
         norm[ind] = min_max_norm(pivot[ind], positive=directions.get(ind, True))
-    weights = entropy_weights(norm)
+    weights = get_weights(norm, weight_method)
     return norm, weights
 
 
-def composite_index_by_year(df: pd.DataFrame, val_col: str) -> pd.DataFrame:
+def composite_index_by_year(
+    df: pd.DataFrame, val_col: str, weight_method: str = "entropy"
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    from .eval_methods import get_weights
+
     df = filter_composite_indicators(df)
     years = sorted(df["年份"].dropna().unique())
     rows = []
@@ -116,7 +123,8 @@ def composite_index_by_year(df: pd.DataFrame, val_col: str) -> pd.DataFrame:
         if sub.empty or sub["指标名称"].nunique() < 2:
             continue
 
-        norm, weights = normalize_year_panel(sub, year, val_col)
+        norm, _ = normalize_year_panel(sub, year, val_col, weight_method)
+        weights = get_weights(norm, weight_method)
         scores = (norm * weights).sum(axis=1)
         for subject, score in scores.items():
             rows.append({"主体": subject, "年份": year, "综合指数": round(float(score), 6)})

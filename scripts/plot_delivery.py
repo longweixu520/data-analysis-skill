@@ -105,6 +105,42 @@ def plot_heatmap(long_csv: Path, out_dir: Path, year: int | None = None, top_sub
     plt.close(fig)
 
 
+def plot_radar(long_csv: Path, comp_csv: Path, out_dir: Path, top_n: int = 5):
+    import numpy as np
+    import pandas as pd
+
+    if not comp_csv.exists() or not long_csv.exists():
+        return
+    comp = pd.read_csv(comp_csv, encoding="utf-8-sig")
+    latest = comp["年份"].max()
+    top = comp[comp["年份"] == latest].nlargest(top_n, "综合指数")["主体"].tolist()
+    df = pd.read_csv(long_csv, encoding="utf-8-sig")
+    val_col = "清洗值" if "清洗值" in df.columns else "原始值"
+    sub = df[(df["年份"] == latest) & (df["主体"].isin(top))]
+    if "是否纳入综合指数" in sub.columns:
+        sub = sub[sub["是否纳入综合指数"].astype(str).str.strip().isin({"是", "1", "true"})]
+    pivot = sub.pivot_table(index="主体", columns="指标名称", values=val_col, aggfunc="first")
+    if pivot.shape[1] < 3:
+        return
+    norm = (pivot - pivot.min()) / (pivot.max() - pivot.min()).replace(0, 1)
+    labels = list(norm.columns)
+    angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
+    angles += angles[:1]
+    fig, ax = plt.subplots(figsize=(7, 7), subplot_kw=dict(polar=True))
+    for subject, row in norm.iterrows():
+        vals = row.tolist() + row.tolist()[:1]
+        ax.plot(angles, vals, marker="o", label=subject)
+        ax.fill(angles, vals, alpha=0.08)
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(labels, fontsize=8)
+    ax.set_title(f"{latest} 年 Top{len(top)} 分维度雷达图")
+    ax.legend(loc="upper right", bbox_to_anchor=(1.25, 1.05), fontsize=8)
+    fig.tight_layout()
+    for ext in ("png", "svg"):
+        fig.savefig(out_dir / f"fig05_雷达图.{ext}", bbox_inches="tight")
+    plt.close(fig)
+
+
 def main():
     parser = argparse.ArgumentParser(description="从分析结果 CSV 生成标准图表")
     parser.add_argument("output_dir", type=Path, help="output/ 目录")
@@ -136,6 +172,9 @@ def main():
             print(f"已生成 {charts}/fig04_热力图.*")
         except ImportError:
             print("跳过热力图：需要 seaborn", file=sys.stderr)
+    if long_csv.exists() and comp_csv.exists():
+        plot_radar(long_csv, comp_csv, charts, min(5, args.top_n))
+        print(f"已生成 {charts}/fig05_雷达图.*")
 
     if not any(charts.glob("fig*")):
         print("未找到可绘图的结果文件", file=sys.stderr)

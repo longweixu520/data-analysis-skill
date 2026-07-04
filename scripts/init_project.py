@@ -76,6 +76,7 @@ RUN_PIPELINE = None  # 使用 templates/src/run_pipeline.py
 def create_project(root: Path, with_sample: bool) -> None:
     skill_root = Path(__file__).resolve().parent.parent
     template_pipeline = skill_root / "templates" / "src" / "run_pipeline.py"
+    template_config = skill_root / "templates" / "analysis.config.yaml"
     dirs = [
         root / "原始数据",
         root / "output" / "图表",
@@ -94,6 +95,8 @@ def create_project(root: Path, with_sample: bool) -> None:
     pipeline_src = template_pipeline.read_text(encoding="utf-8") if template_pipeline.exists() else "# TODO: run_pipeline\n"
     (root / "src" / "run_pipeline.py").write_text(pipeline_src, encoding="utf-8")
     (root / "src" / "parse" / "__init__.py").write_text("", encoding="utf-8")
+    if template_config.exists():
+        (root / "analysis.config.yaml").write_text(template_config.read_text(encoding="utf-8"), encoding="utf-8")
     (root / "requirements.txt").write_text("pandas>=2.0\nopenpyxl>=3.1\nmatplotlib>=3.8\n", encoding="utf-8")
 
     gitkeep = root / "原始数据" / ".gitkeep"

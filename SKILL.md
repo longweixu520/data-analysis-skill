@@ -1,11 +1,24 @@
 ---
 name: data-analysis
-description: 处理 Excel、CSV、多工作表统计表、面板数据、指标评价、城市/企业/地区横向对比、同比环比、综合指数、权重计算、数据清洗与正式分析报告时使用。适用于"从原始数据到可交付结论"的完整流水线——数据侦查、结构修复、标准长表、质量治理、统计对比、综合评价、中文图表与 Markdown/Word 报告。在用户只信任原始文件、要求可复现流程、中文交付物时使用。
+description: 处理 Excel、CSV、多工作表统计表、面板数据、指标评价、城市/企业/地区横向对比、同比环比、综合指数、权重计算、数据清洗与正式分析报告时使用。适用于从原始数据到可交付结论的完整流水线。在用户只信任原始文件、要求可复现流程、中文交付物、一键生成排名图表HTML报告时使用。
 paths: "*.xlsx,*.xls,*.csv,*.xlsm"
 ---
+
 # 数据分析技能 - Data Analysis
 
-本技能为**政务统计、企业经营、区域经济、行业对标、科研问卷**等场景提供结构化的四阶段数据分析流水线，确保「侦查 → 工程 → 计算 → 交付」四环节紧密衔接，产出**可复现、可审计、可交付**的数据分析成果。
+> **黄金路径**（有长表时一条命令交付）：`python scripts/run_pipeline.py <项目目录>`
+
+本技能为**政务统计、企业经营、区域经济、行业对标、科研问卷**等场景提供结构化四阶段流水线 + **可执行工具链**，产出可复现、可审计、可分享的交付物。
+
+## 30 秒开始
+
+```bash
+bash scripts/install_skill.sh      # 安装到 ~/.cursor/skills 等
+python scripts/doctor.py           # 检查依赖
+bash scripts/run_demo.sh           # 看完整产出长什么样
+python scripts/init_project.py 我的项目 --with-sample
+python scripts/run_pipeline.py 我的项目
+```
 
 ## 技能概述
 
@@ -18,9 +31,17 @@ paths: "*.xlsx,*.xls,*.csv,*.xlsm"
 
 本技能采用**四角色协作模式**，各阶段按顺序依次执行，支持渐进式加载以降低上下文负担。
 
-**任务路由**：先读 `references/场景路由表.md`；命令与文件流速查见 `references/速查手册.md`。
+**任务路由**：`references/任务决策树.md` → `references/场景路由表.md` → `references/速查手册.md`
 
-### 一键命令链（已有长表时）
+### 黄金路径（推荐）
+
+```bash
+python scripts/run_pipeline.py <项目目录>
+```
+
+等价于：校验 → 质量报告 → 分析 → 图表 → Markdown → Excel → HTML → 质检
+
+### 分步命令链
 
 ```bash
 python scripts/check_long_table.py output/02_清洗后长表.csv
@@ -122,7 +143,7 @@ python scripts/validate_delivery.py output/ --strict
 | `06-统计推断与假设检验.md` | 相关、回归、显著性、效应量 |
 | `07-可视化与报告规范.md` | Figure Contract、中文图表、报告架构 |
 | `08-业务场景手册.md` | 城市对标、企业分析、问卷、面板数据 |
-| `09-解析代码模板.md` | 模式 A 矩阵解析 CLI 与 run_pipeline 模板 |
+| `10-交付标准与质量标杆.md` | 三级交付标准、表述标杆 |
 
 详见 `assets/README.md`。
 
@@ -151,14 +172,19 @@ python scripts/validate_delivery.py output/ --strict
 | `scripts/check_long_table.py` | 校验长表 schema |
 | `scripts/analyze_long_table.py` | 从长表生成排名/同比/综合指数 |
 | `scripts/plot_delivery.py` | 从结果 CSV 生成标准中文图表 |
+| `scripts/run_pipeline.py` | **一键完整交付**（推荐入口） |
+| `scripts/quality_report.py` | 自动数据质量检查表 |
+| `scripts/build_html_report.py` | 单文件 HTML 报告 |
 | `scripts/parse_matrix.py` | 主体×年份矩阵 → 长表（模式 A） |
+| `scripts/parse_from_config.py` | 按 analysis.config.yaml 批量解析 |
 | `scripts/export_workbook.py` | 汇总 CSV 为 Excel 工作簿 |
 | `scripts/init_project.py` | 初始化项目目录脚手架 |
 | `scripts/profile_data.py` | 快速数据画像 |
 | `scripts/entropy_weights.py` | 熵值法权重（宽表） |
 | `scripts/generate_report.py` | 自动生成报告 Markdown 骨架 |
 | `scripts/validate_delivery.py` | 交付物完整性质检 |
-| `scripts/run_demo.sh` / `Makefile` | 一键演示 |
+| `scripts/parse_from_config.py` | 按 analysis.config.yaml 批量解析 |
+| `scripts/run_demo.sh` / `Makefile` | 演示 / `make pipeline` |
 
 共享库：`scripts/lib/da_core.py`、`scripts/lib/parse_matrix.py`
 

@@ -80,8 +80,8 @@ def check_dir(output_dir: Path, project_root: Path | None, strict: bool = False)
     if strict and not (root / "数据分析报告.md").exists():
         warnings.append("缺少 数据分析报告.md")
 
-    if strict and not (root / "交付清单.md").exists():
-        warnings.append("缺少 交付清单.md")
+    if strict and not (root / "数据分析报告.html").exists():
+        warnings.append("缺少 数据分析报告.html（可运行 build_html_report.py）")
 
     return errors + [f"[警告] {w}" for w in warnings]
 

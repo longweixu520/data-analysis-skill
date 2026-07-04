@@ -1,5 +1,24 @@
 # 更新日志
 
+## v1.4.0 (2026-07)
+
+### 一键交付
+- `run_pipeline.py`：分析→图→报告→Excel→HTML→质检 一条命令
+- `build_html_report.py`：单文件 HTML 交付（可浏览器直接打开分享）
+- `quality_report.py`：自动质量审计表
+
+### 评价方法
+- CRITIC / 等权 / 熵值法（`--weight-method`）
+- `eval_methods.py`：TOPSIS、CRITIC、audit
+
+### 配置驱动
+- `templates/analysis.config.yaml` + `parse_from_config.py`
+- `install_skill.sh` 一键安装到 Cursor/Codex/Claude
+
+### 图表与标准
+- 雷达图 fig05；`assets/10-交付标准与质量标杆.md`
+- `references/任务决策树.md`
+
 ## v1.3.0 (2026-07)
 
 - `parse_matrix.py`：模式 A 矩阵一键转长表

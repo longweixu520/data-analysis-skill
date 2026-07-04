@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 一键演示：样本长表 → 分析 → 图表 → 报告 → 质检
+# 一键演示：样本长表 → 完整流水线
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 DEMO="$ROOT/examples/demo"
@@ -10,25 +10,13 @@ $PYTHON "$ROOT/scripts/doctor.py"
 
 echo "==> 初始化演示项目"
 rm -rf "$DEMO"
-$PYTHON "$ROOT/scripts/init_project.py" "$DEMO" --with-sample --parent "$ROOT/examples"
+$PYTHON "$ROOT/scripts/init_project.py" demo --with-sample --parent "$ROOT/examples"
 
-echo "==> 长表校验"
-$PYTHON "$ROOT/scripts/check_long_table.py" "$DEMO/output/02_清洗后长表.csv"
-
-echo "==> 分析计算"
-$PYTHON "$ROOT/scripts/analyze_long_table.py" "$DEMO/output/02_清洗后长表.csv" -o "$DEMO/output/"
-
-echo "==> 生成图表"
-$PYTHON "$ROOT/scripts/plot_delivery.py" "$DEMO/output/"
-
-echo "==> 报告骨架"
-$PYTHON "$ROOT/scripts/generate_report.py" "$DEMO" -n "演示项目"
-
-echo "==> 导出 Excel"
-$PYTHON "$ROOT/scripts/export_workbook.py" "$DEMO/output/"
-
-echo "==> 交付质检"
-$PYTHON "$ROOT/scripts/validate_delivery.py" "$DEMO/output/" --strict --project "$DEMO"
+echo "==> 一键流水线"
+$PYTHON "$ROOT/scripts/run_pipeline.py" "$DEMO"
 
 echo ""
-echo "✅ 演示完成，产出目录: $DEMO/output/"
+echo "✅ 演示完成"
+echo "   数据: $DEMO/output/"
+echo "   报告: $DEMO/数据分析报告.md"
+echo "   HTML: $DEMO/数据分析报告.html"

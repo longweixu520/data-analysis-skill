@@ -89,11 +89,19 @@ cd my_analysis
 /data-analysis 进行交付汇报
 ```
 
+### 黄金路径
+
+```bash
+bash scripts/install_skill.sh
+python scripts/run_pipeline.py my_project   # 一键交付
+```
+
 ### 演示
 
 ```bash
-bash scripts/run_demo.sh          # 一键跑通样本流水线
-python scripts/doctor.py          # 检查依赖
+bash scripts/run_demo.sh
+python scripts/doctor.py
+make pipeline PROJECT=examples/demo
 ```
 
 ---
