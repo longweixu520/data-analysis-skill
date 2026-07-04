@@ -1,5 +1,5 @@
 ---
-name: csv-data-wrangler
+name: csv-analysis
 description: CSV 编码检测、分隔符识别、按文件大小选择 pandas/polars/DuckDB。在分析大型 CSV、编码乱码、高性能数据处理时使用。
 ---
 
